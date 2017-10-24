@@ -58,7 +58,7 @@ def eval_on_data(X, y, sess):
 		end = offset + batch_size
 		X_batch = X[offset:end]
 		y_batch = y[offset:end]
-		loss, acc = sess.run([loss_op, accuracy_op], feed_dict={features: X_batch, labels: y_batch})
+		loss, acc = sess.run([cost, accuracy_op], feed_dict={x: X_batch, y: y_batch})
 		total_loss += (loss * X_batch.shape[0])
 		total_acc += (acc * X_batch.shape[0])
 	return total_loss/X.shape[0], total_acc/X.shape[0]
