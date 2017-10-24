@@ -68,12 +68,13 @@ with tf.Session() as sess:
 	sess.run(init)
 	for epoch in range(epochs):
 		X_train, y_train = shuffle(X_train, y_train)
+		t0 = time.time()
 		for offset in range(0, len(X_train), batch_size):
 			end = offset + batch_size
 			X_batch, y_batch = X_train[offset:end], y_train[offset:end]
 			sess.run(train_op, feed_dict = {x: X_batch, y: y_batch})
 		val_loss, val_acc = eval_on_data(X_val, y_val, sess)
-		print("Epoch", i+1)
+		print("Epoch", epoch+1)
 		print("Time: %.3f seconds" % (time.time() - t0))
 		print("Validation Loss =", val_loss)
 		print("Validation Accuracy =", val_acc)
