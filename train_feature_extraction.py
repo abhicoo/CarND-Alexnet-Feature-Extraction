@@ -51,13 +51,13 @@ accuracy_op = tf.reduce_mean(tf.cast(correct_preds, tf.float32))
 # TODO: Train and evaluate the feature extraction model.
 init = tf.global_variables_initializer()
 
-def eval_on_data(X, y, sess):
+def eval_on_data(X, Y, sess):
 	total_acc = 0
 	total_loss = 0
 	for offset in range(0, X.shape[0], batch_size):
 		end = offset + batch_size
 		X_batch = X[offset:end]
-		y_batch = y[offset:end]
+		y_batch = Y[offset:end]
 		loss, acc = sess.run([cost, accuracy_op], feed_dict={x: X_batch, y: y_batch})
 		total_loss += (loss * X_batch.shape[0])
 		total_acc += (acc * X_batch.shape[0])
