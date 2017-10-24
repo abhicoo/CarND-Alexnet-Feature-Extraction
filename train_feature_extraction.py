@@ -5,6 +5,9 @@ from sklearn.utils import shuffle
 from alexnet import AlexNet
 import numpy as np
 
+epochs = 10
+batch_size = 128
+
 # TODO: Load traffic signs data.
 traffic_sign_data = pickle.load(open("train.p", "rb" ))
 
@@ -48,8 +51,20 @@ accuracy_op = tf.reduce_mean(tf.cast(correct_preds, tf.float32))
 # TODO: Train and evaluate the feature extraction model.
 init = tf.global_variables_initializer()
 
-epochs = 10
-batch_size = 128
+def eval_on_data(X, y, sess):
+	total_acc = 0
+  total_loss = 0
+  for offset in range(0, X.shape[0], batch_size):
+    end = offset + batch_size
+    X_batch = X[offset:end]
+    y_batch = y[offset:end]
+
+    loss, acc = sess.run([loss_op, accuracy_op], feed_dict={features: X_batch, labels: y_batch})
+    total_loss += (loss * X_batch.shape[0])
+    total_acc += (acc * X_batch.shape[0])
+
+  return total_loss/X.shape[0], total_acc/X.shape[0]
+
 
 with tf.Session() as sess:
 	sess.run(init)
@@ -59,10 +74,12 @@ with tf.Session() as sess:
 			end = offset + batch_size
 			X_batch, y_batch = X_train[offset:end], y_train[offset:end]
 			sess.run(train_op, feed_dict = {x: X_batch, y: y_batch})
-		current_cost = sess.run(cost, feed_dict = {x: X_train, y: y_train})
-		val_accuracy = sess.run(accuracy_op, feed_dict = {x: X_val, y: y_val})
-		print('Cost at epoch {0} is {0}'.format(epoch, current_cost))
-		print('Cost validation accuracy is {0}'.format(val_accuracy))
+		val_loss, val_acc = eval_on_data(X_val, y_val, sess)
+    print("Epoch", i+1)
+    print("Time: %.3f seconds" % (time.time() - t0))
+    print("Validation Loss =", val_loss)
+    print("Validation Accuracy =", val_acc)
+    print("")
 
 
 
